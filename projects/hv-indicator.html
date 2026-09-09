@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HV Indicator Board — Ryan Conroy</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1><a href="../index.html">Ryan Conroy</a></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <a class="back-link" href="../index.html#projects">← Back to Projects</a>
+
+    <article>
+      <h1>HV Indicator Board</h1>
+      <p> The Problem: The Mines Formula FSAE team needs to know when the tractive battery system has reached high voltage levels,
+        as handling hardware at high voltages can have serious implications. As such, the design was needed for safety and rules regulations
+        determined by FSAE international. </p>
+      <p> The Solution: A Non-Opto Flyback Converter with UVLO </p>
+      <p>Breaking it Down:</p>
+      <ul>
+        <li>LT8316 flyback controller drives an isolated output with no optocoupler needed for feedback</li>
+        <li>Sumida 11328-T078 transformer (8:1:1 turns ratio) fully isolates the LV indicator side from the HV bus</li>
+        <li>900V-rated primary MOSFET handles the 432V nominal / 504V peak tractive bus</li>
+        <li>UVLO threshold turns the indicator LED on above 60V, off below 50V — per rule EV.5.7, fully hardwired with no software control</li>
+        <li>IP66/IP67-rated panel LED mounts through the battery container wall, visible from outside</li>
+      </ul>
+      <img src="../img/HV_Voltage_Indicator_Sch.png" alt="HV Indicator Board schematic" class="zoomable">
+      <img src="../img/EV_Voltage_Indicator_3D.png" alt="HV Indicator Board schematic" class="zoomable">
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ryan Conroy.</p>
+  </footer>
+
+  <dialog id="image-modal">
+    <button type="button" id="modal-close" aria-label="Close">&times;</button>
+    <img id="modal-img" src="" alt="">
+  </dialog>
+
+  <script src="../script.js"></script>
+
+</body>
+
+</html>

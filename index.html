@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ryan Conroy — Electrical Engineering Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1><a href="index.html">Ryan Conroy</a></h1>
+    <nav>
+      <ul>
+        <li><a href="#about">About Me</a></li>
+        <li><a href="#projects">My Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="about">
+      <h2>About Me</h2>
+      <div class="about-content">
+        <img src="img/RyanHeadshot.jpg" alt="Ryan Conroy" class="headshot">
+        <div>
+          <p>Hi, I'm Ryan, a second year Electrical Engineering student at the Colorado School of Mines. I design PCBs
+            for the Mines Formula SAE team, working across both the EV and IC race car programs on everything from
+            safety-critical high-voltage hardware to embedded digital systems.</p>
+          <p>I like taking problems, such as a rule in the FSAE handbook or a piece of outdated hardware, and turning it
+            into a working board. A few of these are below.</p>
+          <p>I am currently looking for a co-op or internship in hardware or PCB design, so please reach out!</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2>My Projects</h2>
+
+      <a class="project-card" href="projects/hv-indicator.html">
+        <img src="img/EV_Voltage_Indicator_3D.png" alt="HV Indicator Board schematic">
+        <h3>HV Indicator Board</h3>
+        <p>Non-opto flyback converter with UVLO, built to meet FSAE's EV.5.7 high-voltage indicator rule.</p>
+      </a>
+
+      <a class="project-card" href="projects/ground-station.html">
+        <img src="img/Ground_Station_V6_3D.png" alt="Ground Station V6 PCB">
+        <h3>Ground Station V6</h3>
+        <p>ESP32-S3 ground station relaying timing-gate data to a Raspberry Pi 5, with HDMI output and cloud logging.
+        </p>
+      </a>
+
+      <a class="project-card" href="projects/current-voltage-sensor.html">
+        <img src="img/Current_Voltage_Sensor_3D.png" alt="Current Voltage Sensor PCB">
+        <h3>Current Voltage Sensor</h3>
+        <p>Hall-effect current sensing and op-amp buffered voltage sensing for the EMF1 EV car's safety-critical boards.
+        </p>
+      </a>
+
+      <a class="project-card" href="projects/fpv-drone.html">
+        <img src="img/Drone_Main.jpg" alt="Custom FPV Drone">
+        <h3>FPV Drone</h3>
+        <p>A hand-built 5-inch freestyle quad — frame, stack, motors, and video system chosen and assembled
+          individually.</p>
+      </a>
+
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Always happy to talk about hardware, PCB design, or FSAE. Please feel free to reach out!</p>
+      <div class="contact-links">
+        <a href="mailto:RyanJConroy@outlook.com" class="contact-btn">Email</a>
+        <a href="https://www.linkedin.com/in/ryanjconroy/" class="contact-btn">LinkedIn</a>
+        <a href="https://github.com/ItsRyanConroy" class="contact-btn">GitHub</a>
+        <a href="Ryan_Conroy_Resume.pdf" class="contact-btn" target="_blank" rel="noopener">Resume</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ryan Conroy.</p>
+  </footer>
+
+</body>
+
+</html>

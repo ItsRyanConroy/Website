@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Voltage Sensor — Ryan Conroy</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1><a href="../index.html">Ryan Conroy</a></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <a class="back-link" href="../index.html#projects">← Back to Projects</a>
+
+    <article>
+      <h1>Current Voltage Sensor</h1>
+      <p> The Problem: Safety critical boards such as BSPD and Shutdown Circuit require accurate readings of battery supplied current and voltage
+          within the EMF1 EV Car </p>
+      <p> The Solution: A Hall Effect Sensor, and Op Amp Controlled Voltage </p>
+      <p>Breaking it Down:</p>
+      <ul>
+        <li>ACS758KCB-150B Hall-effect sensor measures bidirectional current up to ±150A without breaking the circuit</li>
+        <li>Resistor divider + MCP6001 op-amp buffer scales and reads 0-15V bus voltage</li>
+        <li>Board is self-powered directly off the sensed bus via an onboard LDO regulator</li>
+        <li>RC filtering on the current sensor output; TVS diode and polyfuse protect the input</li>
+      </ul>
+      <img src="../img/Current_Voltage_Sensor_3D.png" alt="Current Voltage Sensor PCB" class="zoomable">
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ryan Conroy.</p>
+  </footer>
+
+  <dialog id="image-modal">
+    <button type="button" id="modal-close" aria-label="Close">&times;</button>
+    <img id="modal-img" src="" alt="">
+  </dialog>
+
+  <script src="../script.js"></script>
+
+</body>
+
+</html>

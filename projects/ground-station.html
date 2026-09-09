@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ground Station V6 — Ryan Conroy</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1><a href="../index.html">Ryan Conroy</a></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <a class="back-link" href="../index.html#projects">← Back to Projects</a>
+
+    <article>
+      <h1>Ground Station V6</h1>
+      <p> The Problem: As the Mines Formula SAE team developed new hardware, it was apparent that existing hardware was becoming outdated.
+          As new data collection methods emerged, such as timing gates, supporting hardware was required. Ground Station V6 builds on its
+          predecessor, while also including support for HDMI display as well as utilizing ESP32-Now for timing gates data. On top of all,
+          Ground Station V6 commits all received data to the cloud.  </p>
+      <p> The Solution: An ESP32-S3-based ground station that receives timing-gate data wirelessly, relays it to a Raspberry Pi 5, and adds HDMI output and cloud logging on top of the previous version. </p>
+      <p>Breaking it Down:</p>
+      <ul>
+        <li>ESP32-S3-WROOM-1 receives timing-gate data over ESP-NOW and forwards it to a Raspberry Pi 5 over UART</li>
+        <li>TPS56339 buck converter steps 5V down to a 3.3V logic rail</li>
+        <li>TPS2116 power mux lets the board run standalone off USB-C for bench testing</li>
+        <li>Logs data locally to a microSD card over SPI in addition to relaying it to the Pi</li>
+      </ul>
+      <img src="../img/Ground_Station_Sch.png" alt="Ground Station V6 PCB" class="zoomable">
+      <img src="../img/Ground_Station_V6_3D.png" alt="Ground Station V6 PCB" class="zoomable">
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ryan Conroy.</p>
+  </footer>
+
+  <dialog id="image-modal">
+    <button type="button" id="modal-close" aria-label="Close">&times;</button>
+    <img id="modal-img" src="" alt="">
+  </dialog>
+
+  <script src="../script.js"></script>
+
+</body>
+
+</html>
