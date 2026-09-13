@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ground Station V6 — Ryan Conroy</title>
   <link rel="stylesheet" href="../style.css">
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
 <body>
@@ -26,20 +27,145 @@
 
     <article>
       <h1>Ground Station V6</h1>
-      <p> The Problem: As the Mines Formula SAE team developed new hardware, it was apparent that existing hardware was becoming outdated.
-          As new data collection methods emerged, such as timing gates, supporting hardware was required. Ground Station V6 builds on its
-          predecessor, while also including support for HDMI display as well as utilizing ESP32-Now for timing gates data. On top of all,
-          Ground Station V6 commits all received data to the cloud.  </p>
-      <p> The Solution: An ESP32-S3-based ground station that receives timing-gate data wirelessly, relays it to a Raspberry Pi 5, and adds HDMI output and cloud logging on top of the previous version. </p>
-      <p>Breaking it Down:</p>
-      <ul>
-        <li>ESP32-S3-WROOM-1 receives timing-gate data over ESP-NOW and forwards it to a Raspberry Pi 5 over UART</li>
-        <li>TPS56339 buck converter steps 5V down to a 3.3V logic rail</li>
-        <li>TPS2116 power mux lets the board run standalone off USB-C for bench testing</li>
-        <li>Logs data locally to a microSD card over SPI in addition to relaying it to the Pi</li>
-      </ul>
-      <img src="../img/Ground_Station_Sch.png" alt="Ground Station V6 PCB" class="zoomable">
-      <img src="../img/Ground_Station_V6_3D.png" alt="Ground Station V6 PCB" class="zoomable">
+
+      <figure>
+        <model-viewer src="../img/models/Ground_Station_V6.glb" alt="Interactive 3D model of the Ground Station V6"
+          camera-controls auto-rotate shadow-intensity="1"
+          style="width: 100%; height: 400px; background-color: transparent;">
+          <div slot="poster">Loading 3D model…</div>
+        </model-viewer>
+        <figcaption>Interactive 3D model — drag to rotate, scroll to zoom</figcaption>
+      </figure>
+
+      <section>
+        <h2>The Problem</h2>
+        <p>
+          The Formula SAE team's timing gates need a pit-side reciever that can pick up lap/split data over the air and
+          get it in front of the team in real time. This means picking up ESP-NOW packets, fowarding them to a Raspberry
+          Pi 5 for display and logging, and doing it reliably enough to trust over a full test day. Roughly 200m of
+          range, no drift in timestamps, and no dropped packets nobody notices until after the run.
+        </p>
+      </section>
+
+      <section>
+        <h2>Requirements</h2>
+        <p>The board needed to satisfy a few core functions to be useful trackside:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Requirement</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ELEC-1</td>
+              <td>Recieve timing gate data over ESP-NOW at up to ~200m range</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-2</td>
+              <td>Foward data to a Raspberry Pi 5 over UART</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-3</td>
+              <td>Log data locally to a microSD card as a backup to the Pi-side record</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-4</td>
+              <td>Run data entirely from USB-C power, with a fallback power path if needed</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-5</td>
+              <td>Fit the board outline to the Raspberry Pi's form factor without overhanging its USB/Ethernet connector
+                stack</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Design Decisions</h2>
+
+        <h3>ESP32-S3 as the Radio and Control Core</h3>
+        <p>
+          The board is built around an ESP32-S3-WROOM-1-N8 (8MB flash, no PSRAM, built-in antenna). It receives timing
+          packets over ESP-NOW and bridges them to the Pi over UART, with three handshake/interrupt lines: two ready
+          signals on IO37 and IO38, and a GATE interrupt on IO14, wired to Pi header pins 11, 13, and 31 respectively.
+        </p>
+
+        <h3>Power Path: Buck Regulator + USB-C Priority Mux</h3>
+        <p>
+          A TPS56339 buck converter steps 5V down to 3.3V for the ESP32 and peripherals. A TPS2116 power mux handles
+          switchover with USB-C given priority (threshold set around 4.13V via a 47kΩ divider), so the board can run
+          standalone off USB-C for bench testing without needing the full harness connected. Each mux input gets its own
+          PTC fuse (Bourns MF-SM100/33-2, 1.1A hold / 2.2A trip) for independent fault isolation per source.
+        </p>
+
+        <h3>Layout: Switching Section Polygon Pours</h3>
+        <p>
+          Layout feedback on the buck converter section pushed toward polygon pours instead of traced connections, to
+          minimize switching-induced voltage drop.
+        </p>
+
+        <h3>Status LEDs</h3>
+        <p>
+          The board carries six status LEDs for at-a-glance state feedback. Current-limiting resistors
+          were sized per rail rather than using one blanket value across the board — 100Ω for the LEDs fed
+          from the 3.3V rail, and 200Ω for the one LED fed from 5V, keeping forward current consistent
+          across LEDs pulling from different supply voltages.
+        </p>
+      </section>
+
+      <section>
+        <h2>Challenges</h2>
+
+        <h3>Power Budget Correction</h3>
+        <p>
+          Initial worst-case sizing assumed ~900mA draw at 5V. Closer analysis of the actual 3.3V rail draw showed it
+          was closer to ~500mA.
+        </p>
+
+        <h3>BOOT Pin Reliability</h3>
+        <p>
+          The ESP32-S3 has an internal pull-up on its BOOT pin, which is technically enough to meet spec. I added an
+          external 10kΩ pull-up (R28) anyway. A floating or weakly-pulled BOOT pin is a known cause of flaky power-on
+          behavior on ESP32 boards. It is cheap insurance against an intermittent failure that would otherwise be
+          maddening to debug in the field.
+        </p>
+
+        <h3>RF Range and Antenna Keepout</h3>
+        <p>
+          The board needs roughly 200m of ESP-NOW range to be usable trackside, so the WROOM-1's antenna keepout area
+          wasn't an afterthought, it shaped where nearby copper, components, and even the board edge itself could go.
+          Antenna keepouts on integrated-antenna modules like the WROOM-1 typically mean no ground pour, no components,
+          and no routed copper directly beneath or immediately surrounding the antenna trace. Even a nearby ground fill
+          can detune the antenna and quietly cut down real-world range.
+        </p>
+      </section>
+
+      <section>
+        <h2>Status</h2>
+        <p>
+          The board is currently in production for the 26–27 competition year; bring-up will begin in
+          September.
+        </p>
+      </section>
+
+      <figure>
+        <img src="../img/Ground_Station_Sch.png" alt="HV Indicator Board schematic" class="zoomable">
+        <figcaption>HV Indicator Board schematic</figcaption>
+      </figure>
+      <figure>
+        <img src="../img/Ground_Station_V6_3D.png" alt="HV Indicator Board 3D render" class="zoomable">
+        <figcaption>HV Indicator Board 3D render</figcaption>
+      </figure>
     </article>
   </main>
 

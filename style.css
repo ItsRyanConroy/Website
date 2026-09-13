@@ -296,3 +296,96 @@ footer {
     gap: 0.75rem;
   }
 }
+
+/* Content sections within an article (writeup pages) —
+   overrides the homepage section sizing so inner headings
+   don't inherit the 2.75rem hero treatment */
+article section {
+  padding: 0;
+  margin-bottom: 2.5rem;
+}
+
+article section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+article section h3 {
+  color: var(--text);
+  font-size: 1.1rem;
+  margin: 1.25rem 0 0.4rem;
+}
+
+/* Requirements table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+thead {
+  background: rgba(88, 166, 255, 0.08);
+}
+
+th {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Status badges */
+.status {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status--met {
+  color: #56d364;
+  background: rgba(86, 211, 100, 0.12);
+}
+
+.status--removed {
+  color: #e3b341;
+  background: rgba(227, 179, 65, 0.12);
+}
+
+/* Schematic/render figures */
+article figure {
+  margin: 1.5rem 0;
+}
+
+article figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-align: center;
+}

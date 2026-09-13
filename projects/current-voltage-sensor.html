@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Current Voltage Sensor — Ryan Conroy</title>
   <link rel="stylesheet" href="../style.css">
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
 <body>
@@ -26,16 +27,142 @@
 
     <article>
       <h1>Current Voltage Sensor</h1>
-      <p> The Problem: Safety critical boards such as BSPD and Shutdown Circuit require accurate readings of battery supplied current and voltage
-          within the EMF1 EV Car </p>
-      <p> The Solution: A Hall Effect Sensor, and Op Amp Controlled Voltage </p>
-      <p>Breaking it Down:</p>
-      <ul>
-        <li>ACS758KCB-150B Hall-effect sensor measures bidirectional current up to ±150A without breaking the circuit</li>
-        <li>Resistor divider + MCP6001 op-amp buffer scales and reads 0-15V bus voltage</li>
-        <li>Board is self-powered directly off the sensed bus via an onboard LDO regulator</li>
-        <li>RC filtering on the current sensor output; TVS diode and polyfuse protect the input</li>
-      </ul>
+
+      <figure>
+        <model-viewer src="../img/models/CurrentVoltage Sensor.glb"
+          alt="Interactive 3D model of the Current Voltage Sensor" camera-controls auto-rotate shadow-intensity="1"
+          style="width: 100%; height: 400px; background-color: transparent;">
+          <div slot="poster">Loading 3D model…</div>
+        </model-viewer>
+        <figcaption>Interactive 3D model — drag to rotate, scroll to zoom</figcaption>
+      </figure>
+
+      <section>
+        <h2>The Problem</h2>
+        <p>
+          The car needed a way to measure current and voltage inline with the main battery pack,
+          up to ±150A bidirectional and 0–15V, without adding meaningful size or complexity to the
+          high-current path. This was assigned as my first major PCB project, so on top of the
+          electrical requirements, it was also where I learned the actual Altium workflow from
+          close to zero.
+        </p>
+      </section>
+
+      <section>
+        <h2>Requirements</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Requirement</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ELEC-1</td>
+              <td>Sense bidirectional current up to ±150A on the main battery line</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-2</td>
+              <td>Sense bus voltage over a 0–15V range</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-3</td>
+              <td>Self-powered directly from the bus, no external supply</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-4</td>
+              <td>The board shall have a compact footprint</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-5</td>
+              <td>High-current path handled externally via wiring to the car's existing XT90 connectors,
+                not routed through PCB copper</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </section>
+
+      <section>
+        <h2>Design Decisions</h2>
+
+        <h3>Hall Effect/Shunt</h3>
+        <p>
+          Current sensing uses an Allegro ACS758KCB-150B Hall effect sensor with an RC output
+          filter, rather than a shunt-based approach. Avoiding the extra power dissipation and
+          insertion loss a shunt would add directly in the main battery line.
+        </p>
+
+        <h3>Op-Amp UGB</h3>
+        <p>
+          Voltage sensing uses a resistor divider feeding an op-amp buffer (MCP6001) in unity-gain
+          configuration, so the divider isn't loaded down by whatever's reading the signal
+          downstream.
+        </p>
+
+        <h3>LDO/Buck Trade</h3>
+        <p>
+          The board is self-powered directly from the bus rather than needing an external supply. A
+          TPS5430 buck converter was designed in initially, then removed after the power dissipation
+          math showed a simple LM1117-5.0 LDO was sufficient. Calulcations revealeed around 160mW dissipation, which was
+          well within
+          reason without the added complexity of a switching regulator.
+        </p>
+
+        <h3>High Current Flow</h3>
+        <p>
+          150A can't reasonably flow through PCB copper without excessive trace width, so the actual
+          high-current connection is handled through external wiring to the car's existing XT90
+          connectors rather than an on-board connector — keeping the board small and avoiding a
+          high-current connector footprint it doesn't need.
+        </p>
+      </section>
+
+      <section>
+        <h2>Challenges</h2>
+
+        <h3>Learning Altium Software</h3>
+        <p>
+          This was my first major PCB, and I started layout knowing Altium's schematic side but
+          close to nothing about layout. Things like polygon pours, DRC rules, and via/copper practices were
+          all things I learned by hitting them directly on this board rather than in a tutorial
+          first.
+        </p>
+
+        <h3>Oversized Connectors</h3>
+        <p>
+          The original low-current connectors (Molex-style WR-MPC3) got flagged during review and
+          were replaced with JST PH 2.0mm through-hole vertical connectors for the power tap input
+          and signal output. This was a straightforward swap, but one that meant re-checking footprint and
+          board-size impact rather than just dropping in a new part.
+        </p>
+
+        <h3>Maintaing Compact Board Size</h3>
+        <p>
+          Reviewer feedback throughout layout had to be weighed against a hard constraint: any
+          change that grew the board footprint was out, since compact size was the whole point of
+          this board sitting inline with existing wiring. That meant some layout fixes had to be
+          solved within the existing footprint rather than by simply giving a cramped section more
+          room.
+        </p>
+      </section>
+
+      <section>
+        <h2>Status</h2>
+        <p>
+          The team decided to go with an off-the-shelf Hall effect sensor rather than a custom shunt-based
+          measurement circuit. Connector selections and the board layout are finalized.
+        </p>
+      </section>
+
       <img src="../img/Current_Voltage_Sensor_3D.png" alt="Current Voltage Sensor PCB" class="zoomable">
     </article>
   </main>

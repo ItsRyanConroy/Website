@@ -26,17 +26,67 @@
 
     <article>
       <h1>FPV Drone</h1>
-      <p> The Problem: Wanted a fully custom-built 5-inch freestyle quad rather than a pre-built RTF drone, to learn how the frame, flight-controller stack, motors, and digital video system actually integrate. </p>
-      <p> The Solution: Hand-selected and assembled each subsystem individually instead of using a bundled kit. </p>
-      <p>Breaking it Down:</p>
-      <ul>
-        <li>GEPRC GEP-MK5 5" freestyle frame</li>
-        <li>DolphinRC F405 V3 60A flight controller / ESC stack</li>
-        <li>MEPS Neon 2207 1950KV motors</li>
-        <li>Walksnail Avatar HD Pro digital video system, dual antenna</li>
-        <li>RadioMaster RP1 V2 ELRS receiver</li>
-      </ul>
+      <section>
+        <h2>The Problem</h2>
+        <p>
+          I wanted a fully custom-built 5-inch freestyle quad rather than a pre-built RTF drone, to
+          learn how the frame, flight-controller stack, motors, and digital video system actually
+          integrate. I did not want to fly something someone else assembled. That meant researching and
+          hand-selecting every subsystem individually instead of buying a bundled kit.
+        </p>
+      </section>
+
       <img src="../img/Drone_Main.jpg" alt="Custom FPV Drone" class="zoomable">
+
+      <section>
+        <h2>Build</h2>
+        <ul>
+          <li>GEPRC GEP-MK5 5" freestyle frame (30.5×30.5mm FC mount, 20×20mm VTX mount, 16×16mm
+            motor mounts)</li>
+          <li>DolphinRC F405 V3 60A flight controller / ESC stack</li>
+          <li>MEPS Neon 2207 1950KV motors</li>
+          <li>Walksnail Avatar HD Pro Kit, dual antenna</li>
+          <li>Walksnail Avatar Goggles X</li>
+          <li>RadioMaster RP1 V2 ELRS receiver, flown with a RadioMaster Zorro controller</li>
+          <li>CNHL Black Series V2.0 1300mAh 6S batteries, charged on a HOTA D6 Pro</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Design Decisions</h2>
+
+        <h3>Walksnail/DJI O4 Video System</h3>
+        <p>
+          Choosing a digital video ecosystem meant weighing Walksnail against DJI's O4 system.
+          After digging into both against primary manufacturer sources rather than just going with
+          community consensus, Walksnail's Avatar HD Pro kit won out for this build.
+        </p>
+
+        <h3>VTX Power and Data Routing</h3>
+        <p>
+          The VTX is wired to a 10V regulated rail, with data carried over TX2/RX2 to the flight
+          controller. This keeps the video link's power source clean and isolated from the noisier
+          rails elsewhere on the stack.
+        </p>
+      </section>
+
+      <section>
+        <h2>Challenges</h2>
+
+        <h3>Custom Antenna Mount</h3>
+        <p>
+          The GEP-MK5 frame didn't have a native mounting solution for dual Walksnail antennas, so I
+          sourced a purpose-made mount (the "GEPRC Mark5 Walksnail antenna mount + XT60" from
+          Cults3D) rather than improvising something less clean.
+        </p>
+
+        <h3>High Thermal Mass Soldering</h3>
+        <p>
+          Used a tin-both-then-reflow technique with leaded 63/37 solder for stack connections,
+          tinning both surfaces first, then reflowing them together, for cleaner joints on small
+          pads than trying to feed solder in cold.
+        </p>
+      </section>
     </article>
   </main>
 

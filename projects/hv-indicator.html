@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HV Indicator Board — Ryan Conroy</title>
   <link rel="stylesheet" href="../style.css">
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 
 <body>
@@ -26,20 +27,145 @@
 
     <article>
       <h1>HV Indicator Board</h1>
-      <p> The Problem: The Mines Formula FSAE team needs to know when the tractive battery system has reached high voltage levels,
-        as handling hardware at high voltages can have serious implications. As such, the design was needed for safety and rules regulations
-        determined by FSAE international. </p>
-      <p> The Solution: A Non-Opto Flyback Converter with UVLO </p>
-      <p>Breaking it Down:</p>
-      <ul>
-        <li>LT8316 flyback controller drives an isolated output with no optocoupler needed for feedback</li>
-        <li>Sumida 11328-T078 transformer (8:1:1 turns ratio) fully isolates the LV indicator side from the HV bus</li>
-        <li>900V-rated primary MOSFET handles the 432V nominal / 504V peak tractive bus</li>
-        <li>UVLO threshold turns the indicator LED on above 60V, off below 50V — per rule EV.5.7, fully hardwired with no software control</li>
-        <li>IP66/IP67-rated panel LED mounts through the battery container wall, visible from outside</li>
-      </ul>
-      <img src="../img/HV_Voltage_Indicator_Sch.png" alt="HV Indicator Board schematic" class="zoomable">
-      <img src="../img/EV_Voltage_Indicator_3D.png" alt="HV Indicator Board schematic" class="zoomable">
+
+      <figure>
+        <model-viewer src="../img/models/EV_Voltage_Indicator.glb" alt="Interactive 3D model of the HV Indicator Board"
+          camera-controls auto-rotate shadow-intensity="1"
+          style="width: 100%; height: 400px; background-color: transparent;">
+          <div slot="poster">Loading 3D model…</div>
+        </model-viewer>
+        <figcaption>Interactive 3D model — drag to rotate, scroll to zoom</figcaption>
+      </figure>
+
+      <section>
+        <h2>The Problem</h2>
+        <p>
+          FSAE EV rules (EV.5.7) require a visible indicator on the tractive system that turns on
+          above 60V and off below 50V. This must be hardwired to the vehicle-side voltage, with no
+          software control and no dependence on the AIR-closing signal. At its core, it has to work
+          independent of the car's logic, because the entire purpose is to warn someone before they
+          touch a live pack. The board lives inside the Tractive Battery Container, mounted so that
+          the warning LED sits in open air through the container wall.
+        </p>
+      </section>
+
+      <section>
+        <h2>Requirements</h2>
+        <p>To start, a list of requirements for the HV Indicator was generated to better define project scope.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Requirement</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ELEC-257</td>
+              <td>The system shall keep HV and LV isolated (20mm uncoated, 3mm coated)</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-258</td>
+              <td>The system shall detect when voltage is above 60V and turn on a green LED</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-259</td>
+              <td>The system's status LED shall be able to be turned on from an external source for lamp check</td>
+              <td><span class="status status--removed">Removed (see Challenges)</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-260</td>
+              <td>The system shall be in compliance with EV.5.7</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-261</td>
+              <td>The system shall have no software control</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+            <tr>
+              <td>ELEC-262</td>
+              <td>The status light's states shall be clearly distinguishable</td>
+              <td><span class="status status--met">Met</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Design Decisions</h2>
+
+        <h3>No-opto isolated flyback</h3>
+        <p>
+          The LT8316 senses the HV bus directly and regulates a 12V isolated secondary through a
+          transformer (Sumida 11328-T078). With this there is no optocoupler, no microcontroller,
+          nothing that software can touch. This satisfies EV.5.7's "no software control" requirement
+          structurally, not just procedurally.
+        </p>
+
+        <h3>UVLO divider tuned for the 50V/60V hysteresis band</h3>
+        <p>
+          The EN/UVLO divider sets the ON/OFF thresholds. I went through a few iterations here,
+          first centering the band at 55V, then landing on a 3×140kΩ divider (Yageo thin-film, 0.1%,
+          25ppm) to hit the rule's actual 50V-OFF / 60V-ON spec rather than a symmetric guess.
+        </p>
+
+        <h3>Isolation and creepage</h3>
+        <p>
+          This is a safety board sitting in a high-voltage container, so trace spacing is not
+          cosmetic. EV.7.5.7 sets the TS-to-LV clearance/creepage at 3.0mm/20.0mm uncoated (4.0mm
+          creepage if conformal coated). For this board, the coated allowance was used, since the
+          board's physical distance from external HV elements is less than 20mm — plus it adds an
+          additional safety factor.
+        </p>
+      </section>
+
+      <section>
+        <h2>Challenges</h2>
+
+        <h3>Lamp-test circuit: added, then removed</h3>
+        <p>
+          Early requirements called for an external lamp-check input. Further scrutiny of FSAE rules
+          found that grounded low voltage was not allowed to enter the EV Voltage Indicator system.
+          Therefore, the secondary is a fully isolated 2-wire island. Benefits of this change included
+          board simplicity, lower cost, one less failure mode, and added safety.
+        </p>
+
+        <h3>Footprint spacing</h3>
+        <p>
+          The Y-cap bridging HV_GND to LV_GND (SMDY1222MY5UDR) has a footprint that I could not route
+          with 20mm creepage in the space available. The solution was to rely on conformal coating,
+          verified with a witness-coupon cross-section after coating.
+        </p>
+
+        <h3>HV_PWR to HV_GND spacing</h3>
+        <p>
+          Beyond the HV-to-LV spacing spec, the voltage potential on the primary side had its own
+          spacing requirement — 504V peak needs 2.5mm clearance between power and ground traces. This
+          was an error caught during PCB review, flagged and fixed before manufacture.
+        </p>
+      </section>
+
+      <section>
+        <h2>Status</h2>
+        <p>
+          The board is currently in production for the 26–27 competition year; bring-up will begin in
+          September.
+        </p>
+      </section>
+
+      <figure>
+        <img src="../img/HV_Voltage_Indicator_Sch.png" alt="HV Indicator Board schematic" class="zoomable">
+        <figcaption>HV Indicator Board schematic</figcaption>
+      </figure>
+      <figure>
+        <img src="../img/EV_Voltage_Indicator_3D.png" alt="HV Indicator Board 3D render" class="zoomable">
+        <figcaption>HV Indicator Board 3D render</figcaption>
+      </figure>
     </article>
   </main>
 
